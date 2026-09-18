@@ -1,0 +1,39 @@
+%%{init: {"flowchart": {"htmlLabels": true, "nodeSpacing": 32, "rankSpacing": 34, "curve": "linear", "useMaxWidth": true}, "theme": "base", "themeVariables": {"fontFamily": "Arial, sans-serif", "primaryTextColor": "#19324F", "lineColor": "#21619D"}} }%%
+flowchart TB
+    subgraph ACCESS["DATA ACCESS LAYER · Mongoose 8.0 ODM · api/modules/"]
+        direction TB
+        ODM["<div style='font-size:18px;font-weight:700'>Mongoose model access</div><div style='font-size:12px;margin-top:5px'>Schema validation · document mapping · MongoDB persistence</div>"]
+
+        subgraph MODELS["MODELS (10)"]
+            direction TB
+            subgraph TOP[" "]
+                direction LR
+                MEMBER["<b>Member</b><br/><span style='font-size:12px'>user identity · credentials</span>"]
+                PROJECTS["<b>KanbanProject · ScrumProject</b><br/><span style='font-size:12px'>members[] · roles</span>"]
+                BOARDS["<b>KanbanBoard · ScrumBoard</b><br/><span style='font-size:12px'>cards[] · tasks[] · sprint fields</span>"]
+                MEMBER ~~~ PROJECTS ~~~ BOARDS
+            end
+            subgraph BOTTOM[" "]
+                direction LR
+                DAILY["<b>DailyScrum</b><br/><span style='font-size:12px'>daily scrum · sprint review</span>"]
+                TEST["<b>TestCase</b><br/><span style='font-size:12px'>TDD status lifecycle</span>"]
+                MESSAGE["<b>Question · Message</b><br/><span style='font-size:12px'>issue-board posts · replies</span>"]
+                PDF["<b>PDF</b><br/><span style='font-size:12px'>file metadata</span>"]
+                DAILY ~~~ TEST ~~~ MESSAGE ~~~ PDF
+            end
+            TOP ~~~ BOTTOM
+        end
+
+        ODM --> MODELS
+    end
+
+    classDef odm fill:#E6F4EA,stroke:#8FC8A6,stroke-width:2px,color:#146D43
+    classDef model fill:#FFFFFF,stroke:#BFCFDD,stroke-width:1.5px,color:#19324F
+
+    class ODM odm
+    class MEMBER,PROJECTS,BOARDS,DAILY,TEST,MESSAGE,PDF model
+
+    style ACCESS fill:#F6F9FC,stroke:#BFCFDD,stroke-width:1.5px,color:#225D96
+    style MODELS fill:#FFFFFF,stroke:#BFCFDD,stroke-width:1.5px,color:#225D96
+    style TOP fill:transparent,stroke:transparent
+    style BOTTOM fill:transparent,stroke:transparent

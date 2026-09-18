@@ -1,0 +1,42 @@
+%%{init: {"flowchart": {"htmlLabels": true, "nodeSpacing": 28, "rankSpacing": 32, "curve": "linear", "useMaxWidth": true}, "theme": "base", "themeVariables": {"fontFamily": "Arial, sans-serif", "primaryTextColor": "#19324F", "lineColor": "#21619D"}} }%%
+flowchart TB
+    subgraph PRESENTATION["PRESENTATION LAYER · React 18.2 · Create React App 5 · React Router 6 · Bootstrap 5 · localhost:3000"]
+        direction TB
+        USER["<b>Project users</b>"]
+        SPA["<div style='font-size:18px;font-weight:700'>React single-page application</div><div style='font-size:12px;margin-top:5px'>Native fetch with credentials: include · session cookie</div>"]
+
+        subgraph FEATURES["FEATURES"]
+            direction TB
+            subgraph TOP[" "]
+                direction LR
+                AUTH_UI["<b>Authentication</b><br/><span style='font-size:12px'>Email + OTP · Google OAuth</span>"]
+                PROJECT_UI["<b>Project workspace</b><br/><span style='font-size:12px'>Dashboard · profile · chooser</span>"]
+                BOARD_UI["<b>Scrum &amp; Kanban boards</b><br/><span style='font-size:12px'>Backlog · sprint · cards · drag-and-drop</span>"]
+                AUTH_UI ~~~ PROJECT_UI ~~~ BOARD_UI
+            end
+            subgraph BOTTOM[" "]
+                direction LR
+                TDD_UI["<b>TDD workspace</b><br/><span style='font-size:12px'>Requirements → test design → test plan</span>"]
+                ISSUE_UI["<b>Live issue board</b><br/><span style='font-size:12px'>Chat UI · socket.io-client 4.7</span>"]
+                REPORT_UI["<b>Client-side reporting</b><br/><span style='font-size:12px'>Burndown · velocity · control chart · pie · resolution time · Gantt<br/>Recharts · ApexCharts · D3</span>"]
+                TDD_UI ~~~ ISSUE_UI ~~~ REPORT_UI
+            end
+            TOP ~~~ BOTTOM
+        end
+
+        USER --> SPA
+        SPA --> FEATURES
+    end
+
+    classDef user fill:#FFFFFF,stroke:#BFCFDD,stroke-width:1.5px,color:#19324F
+    classDef shell fill:#FFFFFF,stroke:#BFCFDD,stroke-width:2px,color:#19324F
+    classDef feature fill:#EAF3FA,stroke:#C8DDEA,stroke-width:1.5px,color:#19324F
+
+    class USER user
+    class SPA shell
+    class AUTH_UI,PROJECT_UI,BOARD_UI,TDD_UI,ISSUE_UI,REPORT_UI feature
+
+    style PRESENTATION fill:#EAF3FA,stroke:#BFCFDD,stroke-width:1.5px,color:#225D96
+    style FEATURES fill:#FFFFFF,stroke:#BFCFDD,stroke-width:1.5px,color:#225D96
+    style TOP fill:transparent,stroke:transparent
+    style BOTTOM fill:transparent,stroke:transparent

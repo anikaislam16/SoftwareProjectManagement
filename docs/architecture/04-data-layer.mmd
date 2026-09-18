@@ -1,0 +1,43 @@
+%%{init: {"flowchart": {"htmlLabels": true, "nodeSpacing": 30, "rankSpacing": 34, "curve": "linear", "useMaxWidth": true}, "theme": "base", "themeVariables": {"fontFamily": "Arial, sans-serif", "primaryTextColor": "#19324F", "lineColor": "#21619D"}} }%%
+flowchart TB
+    subgraph DATA["DATA LAYER · MongoDB 7.0 · database: student · localhost:27017"]
+        direction TB
+        DATABASE["<div style='font-size:18px;font-weight:700'>Persistent application records</div><div style='font-size:12px;margin-top:5px'>MongoDB collections managed through Mongoose</div>"]
+
+        subgraph COLLECTIONS["RECORDS"]
+            direction TB
+            subgraph TOP[" "]
+                direction LR
+                MEMBERS[("<b>members</b><br/><span style='font-size:12px'>users · bcrypt password hashes</span>")]
+                PROJECTS[("<b>kanbanprojects · scrumprojects</b><br/><span style='font-size:12px'>embedded members[].role</span>")]
+                BOARDS[("<b>kanbanboards · scrumboards</b><br/><span style='font-size:12px'>embedded cards[] · task[] subtasks<br/>tags · dependencies · sprint fields</span>")]
+                DAILY[("<b>dailyscrums</b><br/><span style='font-size:12px'>daily scrum · sprint review records</span>")]
+                MEMBERS ~~~ PROJECTS ~~~ BOARDS ~~~ DAILY
+            end
+            subgraph BOTTOM[" "]
+                direction LR
+                TESTS[("<b>testcases</b><br/><span style='font-size:12px'>TDD test cases per task</span>")]
+                MESSAGES[("<b>questions · messages</b><br/><span style='font-size:12px'>issue-board posts · replies</span>")]
+                PDFS[("<b>pdfs</b><br/><span style='font-size:12px'>file metadata → api/uploads/</span>")]
+                TESTS ~~~ MESSAGES ~~~ PDFS
+            end
+            TOP ~~~ BOTTOM
+        end
+
+        FILES["<b>api/uploads/</b> &nbsp; PDF files on disk"]
+        DATABASE --> COLLECTIONS
+        COLLECTIONS -->|"PDF file content"| FILES
+    end
+
+    classDef database fill:#FCE8E6,stroke:#E6AAA2,stroke-width:2px,color:#8A2A21
+    classDef collection fill:#FFFFFF,stroke:#BFCFDD,stroke-width:1.5px,color:#19324F
+    classDef files fill:#F4F0FF,stroke:#B6A2E5,stroke-width:1.5px,color:#3B2A68
+
+    class DATABASE database
+    class MEMBERS,PROJECTS,BOARDS,DAILY,TESTS,MESSAGES,PDFS collection
+    class FILES files
+
+    style DATA fill:#EAF3FA,stroke:#BFCFDD,stroke-width:1.5px,color:#225D96
+    style COLLECTIONS fill:#FFFFFF,stroke:#BFCFDD,stroke-width:1.5px,color:#225D96
+    style TOP fill:transparent,stroke:transparent
+    style BOTTOM fill:transparent,stroke:transparent

@@ -1,0 +1,38 @@
+%%{init: {"flowchart": {"htmlLabels": true, "nodeSpacing": 30, "rankSpacing": 34, "curve": "linear", "useMaxWidth": true}, "theme": "base", "themeVariables": {"fontFamily": "Arial, sans-serif", "primaryTextColor": "#19324F", "lineColor": "#21619D"}} }%%
+flowchart TB
+    subgraph API["APPLICATION / API LAYER · Node.js · Express 4.18 · Socket.IO 4.7 · localhost:3010"]
+        direction TB
+        AUTHZ["<div style='font-size:18px;font-weight:700'>Identity verification &amp; project-role authorization</div><div style='font-size:12px;margin-top:5px'>express-session · bcryptjs · Passport Google OAuth2 · Nodemailer OTP<br/>Admin · Scrum Master · Product Owner · Developer</div>"]
+
+        subgraph SERVICES["SERVICES"]
+            direction TB
+            subgraph TOP[" "]
+                direction LR
+                PROJECT["<b>Project &amp; membership</b><br/><span style='font-size:12px'>/projects/kanban · /projects/scrum<br/>projects · members · role policy · e-mail alerts</span>"]
+                SCRUM["<b>Scrum workflow</b><br/><span style='font-size:12px'>Backlog · sprint boards · rollover<br/>Daily Scrum · Sprint Review</span>"]
+                KANBAN["<b>Kanban workflow</b><br/><span style='font-size:12px'>Boards · cards · tasks · tags<br/>drag-and-drop · reorder</span>"]
+                PROJECT ~~~ SCRUM ~~~ KANBAN
+            end
+            subgraph BOTTOM[" "]
+                direction LR
+                TDD["<b>TDD management</b><br/><span style='font-size:12px'>/test/scrum · /test/kanban<br/>refactor → passed / failed</span>"]
+                ISSUE["<b>Live issue board</b><br/><span style='font-size:12px'>/message · Chat + Message controllers<br/>Socket.IO relay · e-mail notifications</span>"]
+                FILE["<b>PDF file management</b><br/><span style='font-size:12px'>/pdf · Multer disk storage<br/>upload · download</span>"]
+                TDD ~~~ ISSUE ~~~ FILE
+            end
+            TOP ~~~ BOTTOM
+        end
+
+        AUTHZ -->|"authorized operations"| SERVICES
+    end
+
+    classDef auth fill:#E5F3EF,stroke:#9ACDC3,stroke-width:2px,color:#146D67
+    classDef service fill:#EAF3FA,stroke:#C8DDEA,stroke-width:1.5px,color:#19324F
+
+    class AUTHZ auth
+    class PROJECT,SCRUM,KANBAN,TDD,ISSUE,FILE service
+
+    style API fill:#F6F9FC,stroke:#BFCFDD,stroke-width:1.5px,color:#225D96
+    style SERVICES fill:#FFFFFF,stroke:#BFCFDD,stroke-width:1.5px,color:#225D96
+    style TOP fill:transparent,stroke:transparent
+    style BOTTOM fill:transparent,stroke:transparent
