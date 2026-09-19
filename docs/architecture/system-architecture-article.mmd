@@ -1,0 +1,62 @@
+%%{init: {"flowchart": {"htmlLabels": true, "nodeSpacing": 26, "rankSpacing": 40, "curve": "linear", "useMaxWidth": false, "padding": 12}, "theme": "base", "themeVariables": {"fontFamily": "Helvetica, Arial, sans-serif", "fontSize": "14px", "primaryTextColor": "#000000", "primaryBorderColor": "#000000", "lineColor": "#000000", "clusterBkg": "#FFFFFF", "clusterBorder": "#000000"}} }%%
+flowchart TB
+
+    %% ============ PRESENTATION LAYER ============
+    subgraph PL["Presentation Layer — React single-page application"]
+        direction LR
+        AUTH_UI["Authentication<br/><i>email + OTP · Google OAuth</i>"]
+        DASH_UI["Dashboard &<br/>project workspace"]
+        SCRUM_UI["Scrum board"]
+        KANBAN_UI["Kanban board"]
+        TDD_UI["TDD workspace"]
+        ISSUE_UI["Live issue board"]
+        REPORT_UI["Reports<br/><i>client-side analytics</i>"]
+    end
+
+    %% ============ APPLICATION LAYER ============
+    subgraph AL["Application Layer — Node.js / Express REST & WebSocket API"]
+        direction LR
+        AUTH["Authentication &<br/>authorization"]
+        PROJ["Project &<br/>membership"]
+        SCRUM["Scrum<br/>workflow"]
+        KANBAN["Kanban<br/>workflow"]
+        TDD["TDD<br/>management"]
+        ISSUE["Live issue<br/>board"]
+        FILES["File (PDF)<br/>management"]
+    end
+
+    %% ============ DATA ACCESS LAYER ============
+    subgraph DAL["Data Access Layer — Mongoose ODM"]
+        direction LR
+        MODELS["Domain models<br/><i>10 schemas</i>"]
+        STORE["File storage<br/><i>disk uploads</i>"]
+    end
+
+    %% ============ DATA LAYER ============
+    subgraph DL["Data Layer"]
+        direction LR
+        DB[("MongoDB<br/><i>10 collections</i>")]
+        FS[("File store")]
+    end
+
+    %% ============ COMMUNICATION ============
+    PL -->|"REST / JSON (session cookie)"| AL
+    PL <-.->|"WebSocket (real-time issues)"| AL
+    AL -->|"object-document mapping"| DAL
+    DAL -->|"read / write"| DL
+
+    %% ============ PRINT-SAFE STYLING ============
+    classDef layer1 fill:#FFFFFF,stroke:#000000,stroke-width:1px,color:#000000
+    classDef layer2 fill:#F4F4F4,stroke:#000000,stroke-width:1px,color:#000000
+    classDef layer3 fill:#E8E8E8,stroke:#000000,stroke-width:1px,color:#000000
+    classDef layer4 fill:#DCDCDC,stroke:#000000,stroke-width:1px,color:#000000
+
+    class AUTH_UI,DASH_UI,SCRUM_UI,KANBAN_UI,TDD_UI,ISSUE_UI,REPORT_UI layer1
+    class AUTH,PROJ,SCRUM,KANBAN,TDD,ISSUE,FILES layer2
+    class MODELS,STORE layer3
+    class DB,FS layer4
+
+    style PL fill:#FFFFFF,stroke:#000000,stroke-width:1.25px,color:#000000
+    style AL fill:#FAFAFA,stroke:#000000,stroke-width:1.25px,color:#000000
+    style DAL fill:#F0F0F0,stroke:#000000,stroke-width:1.25px,color:#000000
+    style DL fill:#E6E6E6,stroke:#000000,stroke-width:1.25px,color:#000000
