@@ -17,6 +17,7 @@ const MessageRoute = require("./routes/messageRoute/MessageRoute.js");
 const cors = require("cors");
 const env = require("dotenv");
 const cookieParser = require("cookie-parser");
+const session = require("express-session");
 
 const bodyParser = require("body-parser");
 
@@ -39,6 +40,22 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(morgan("dev"));
+// Session is set up for the whole API (it used to live only on the /signup
+// router) so every route can read req.session - required by the auth
+// middleware. Same secret and cookie as before, so existing logins and the
+// signup/login flow keep working unchanged.
+app.use(
+  session({
+    secret: "12345anika",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false, // Set to true if using HTTPS
+      maxAge: 30 * 24 * 60 * 60000,
+      httpOnly: true,
+    },
+  })
+);
 connectToMongoDB();
 
 // Define a route for the index page

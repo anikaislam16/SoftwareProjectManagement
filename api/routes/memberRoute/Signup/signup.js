@@ -1,6 +1,5 @@
 var express = require('express');
 var sign = express.Router();
-const session = require("express-session");
 const passport = require("passport");
 const OAuth2Strategy = require("passport-google-oauth2").Strategy;
 const cors = require("cors");
@@ -9,21 +8,11 @@ const { Userinfostore, UserinfoUpdate, updateMemberinfo } = require('./storeuser
 const { Member } = require('../../../modules/MemberModule.js');
 const { findMemberbyId, memberget, findMemberRoleInProject, sendOtpEmail } = require('./findmemberbyId.js')
 var bcrypt = require('bcryptjs');
+const { requireAuth } = require('../../../middleware/authMiddleware');
 let origin = "";
 
-// setup session
-sign.use(
-    session({
-        secret: "12345anika",
-        resave: false,
-        saveUninitialized: false,
-        cookie: {
-            secure: false, // Set to true if using HTTPS
-            maxAge: 30 * 24 * 60 * 60000, // Session duration in milliseconds (1 day in this example)
-            httpOnly: true,
-        },
-    })
-);
+// Session setup moved to index.js (app level) so it is shared by every
+// route, including the project routes that now check authorization.
 
 var signpost = async (req, res) => {
     const { email } = req.body;
@@ -279,5 +268,7 @@ sign.route('/login').get(logingooglematch).post(signget).put(googlesessionget).d
 sign.route('/loginmatch').post(loginmatch).get(sessionget).delete(sessiondel);
 sign.route('/login/forgetpass').post(findEmailotp);
 sign.route('/:id').get(findMemberbyId).put(memberget);
-sign.route('/:projectType/:projectId/member/:memberId').get(findMemberRoleInProject);
+// Role lookup now requires a logged-in session, and only your own role can
+// be requested (checked inside findMemberRoleInProject via req.member).
+sign.route('/:projectType/:projectId/member/:memberId').get(requireAuth, findMemberRoleInProject);
 module.exports = sign;

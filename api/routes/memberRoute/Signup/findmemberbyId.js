@@ -35,6 +35,11 @@ const memberget = async (req, res) => {
 const findMemberRoleInProject = async (req, res) => {
     const { projectType, projectId, memberId } = await req.params;
     try {
+        // Only the member behind the session may ask for a role - otherwise
+        // any logged-in user could read other people's roles.
+        if (!req.member || req.member._id.toString() !== memberId) {
+            return res.status(403).json({ message: 'Not allowed to view this role' });
+        }
         // Find the project with the specific _id
         let project;
         console.log("fg", projectType, projectId, memberId)

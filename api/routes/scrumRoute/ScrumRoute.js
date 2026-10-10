@@ -41,11 +41,21 @@ const {
   createDailyScrum,
   updateDailyScrum,
 } = require("./ScrumController/ScrumReviewController");
+const {
+  requireAuth,
+  requireProjectMember,
+  requireDailyScrumMember,
+} = require("../../middleware/authMiddleware");
+
+// Every scrum route requires a logged-in session; routes that point at one
+// project additionally check that the caller is a member of that project.
+const scrumMember = requireProjectMember("scrum");
 router.use(logRequestInfo);
+router.use(requireAuth);
 router.route("/").get(getAllProjects).post(createProject).put(getProjectByMember);
 // project id diye project er schema change kora hbe.
 
-router.post("/DailyScrum", async (req, res) => {
+router.post("/DailyScrum", scrumMember, async (req, res) => {
   const { name, type, scrumDate, content, projectId } = req.body;
   console.log(name, type, scrumDate, content, projectId);
   try {
@@ -88,7 +98,7 @@ router.get("/DailyScrum", async (req, res) => {
   }
 });
 // Route to update the content of a DailyScrum document by ID
-router.put("/DailyScrum/:id", async (req, res) => {
+router.put("/DailyScrum/:id", requireDailyScrumMember, async (req, res) => {
   const { id } = req.params;
   const { content } = req.body;
 
@@ -107,41 +117,41 @@ router.put("/DailyScrum/:id", async (req, res) => {
 });
 router
   .route("/:id")
-  .get(getProjectById)
-  .put(updateProject)
-  .delete(deleteProject) //eta te oi project er board delete hbe na.
-  .post(addBoard);
+  .get(scrumMember, getProjectById)
+  .put(scrumMember, updateProject)
+  .delete(scrumMember, deleteProject) //eta te oi project er board delete hbe na.
+  .post(scrumMember, addBoard);
 //project id r board id diye, board er info niye kaaj hbe.
 router
   .route("/:id/:boardId")
-  .put(updateBoard)
-  .get(showBoardById)
-  .delete(deleteBoard)
-  .post(addCard);
+  .put(scrumMember, updateBoard)
+  .get(scrumMember, showBoardById)
+  .delete(scrumMember, deleteBoard)
+  .post(scrumMember, addCard);
 //porject id, board id, card id diye card niye kaaj hbe.
-router.route("/:id/:boardId/:cardId").get(showCard).delete(deleteCard);
-router.route("/:id/:boardId/:cardId").put(updateCardName);
+router.route("/:id/:boardId/:cardId").get(scrumMember, showCard).delete(scrumMember, deleteCard);
+router.route("/:id/:boardId/:cardId").put(scrumMember, updateCardName);
 //card move er khetre eita kaj krbe. drag n drop er jonno.
 router
   .route(
     "/:id/cards/reorderCards/:board1Id/:board2Id/:sourceIndex/:destinationIndex"
   )
-  .put(reorderCardsInDiffBoard);
+  .put(scrumMember, reorderCardsInDiffBoard);
 router
   .route("/:id/:boardId/cards/reorderCards/:sourceIndex/:destinationIndex")
-  .put(reorderCardsInSameBoard);
+  .put(scrumMember, reorderCardsInSameBoard);
 //board e card er emn element jader specific id ace. tader info change er jonno or delete er jonno. eta korte , oi element name r oi element er id lagbe.
 router
   .route("/:id/:boardId/:cardId/:subDocumentKey/:subDocumentId")
-  .put(updateCardField)
-  .post(deleteCardFieldbyMember)
-  .delete(deleteCardField);
+  .put(scrumMember, updateCardField)
+  .post(scrumMember, deleteCardFieldbyMember)
+  .delete(scrumMember, deleteCardField);
 router.route("/boards/reorder/IHateThis/:boardId").put(moveCardsToNewBoard);
-router.route("/member/member/:id/:memberId").delete(deleteMemberfromProject).post(addMemberInProject);
+router.route("/member/member/:id/:memberId").delete(scrumMember, deleteMemberfromProject).post(scrumMember, addMemberInProject);
 router
   .route(
     "/reorder/reorder/reorder/reorder/reorder/reorder/reorder/reorder/reorder/reorder"
   )
   .put(reorderCards);
-router.route("/:id/:boardId/:cardId/dependency/card/check").get(dependentcard);
+router.route("/:id/:boardId/:cardId/dependency/card/check").get(scrumMember, dependentcard);
 module.exports = router;
